@@ -10,16 +10,12 @@
     :root {
       --primary: #06C755;
       --primary-dark: #05a84a;
-      --bg: #f8fffb;
-      --text: #2c3e50;
-      --border: #d0e8d8;
-      --shadow: 0 8px 25px rgba(6, 199, 85, 0.15);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Prompt', sans-serif;
       background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
-      color: var(--text);
+      color: #2c3e50;
       min-height: 100vh;
       padding: 10px;
     }
@@ -29,7 +25,7 @@
       background: white;
       border-radius: 20px;
       overflow: hidden;
-      box-shadow: var(--shadow);
+      box-shadow: 0 8px 30px rgba(6,199,85,0.2);
     }
     .header {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -37,8 +33,8 @@
       text-align: center;
       padding: 30px 20px;
     }
-    .header h1 { font-size: 26px; margin: 0; }
-    .header p { margin-top: 8px; font-size: 16px; opacity: 0.95; }
+    .header h1 { font-size: 26px; }
+    .header p { margin-top: 8px; opacity: 0.95; }
 
     .content { padding: 35px 40px; }
 
@@ -59,25 +55,7 @@
     }
     .profile-name { margin: 15px 0 5px; font-size: 20px; font-weight: 600; color: var(--primary); }
 
-    h2 {
-      text-align: center;
-      color: var(--primary);
-      margin: 35px 0 25px;
-      font-size: 22px;
-      position: relative;
-    }
-    h2::after {
-      content: '';
-      width: 80px; height: 4px;
-      background: var(--primary);
-      display: block;
-      margin: 12px auto 0;
-      border-radius: 2px;
-    }
-
-    .form-group {
-      margin-bottom: 24px;
-    }
+    .form-group { margin-bottom: 24px; }
     label {
       display: block;
       font-weight: 600;
@@ -85,7 +63,7 @@
       margin-bottom: 8px;
       font-size: 16px;
     }
-    input, textarea, select {
+    select, textarea {
       width: 100%;
       padding: 14px 16px;
       border: 2px solid #cce7d6;
@@ -94,7 +72,7 @@
       font-size: 16px;
       background: #f8fffb;
     }
-    input:focus, textarea:focus, select:focus {
+    select:focus, textarea:focus {
       outline: none;
       border-color: var(--primary);
       background: white;
@@ -105,18 +83,18 @@
     .image-upload {
       border: 2px dashed #86efac;
       border-radius: 12px;
-      padding: 20px;
+      padding: 25px;
       text-align: center;
       background: #f0fdf4;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: 0.3s;
     }
     .image-upload:hover { background: #e6f7ee; }
     .image-preview {
       max-width: 100%;
-      max-height: 200px;
-      margin-top: 10px;
-      border-radius: 8px;
+      max-height: 220px;
+      margin-top: 12px;
+      border-radius: 10px;
       display: none;
     }
 
@@ -134,19 +112,17 @@
       font-weight: 600;
       cursor: pointer;
       box-shadow: 0 6px 20px rgba(6,199,85,0.3);
-      transition: all 0.3s;
+      transition: 0.3s;
     }
-    button:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(6,199,85,0.4); }
+    button:hover { transform: translateY(-3px); }
     button:disabled {
       background: #95a5a6;
-      transform: none;
       cursor: not-allowed;
     }
 
-    .loading, .error {
+    .loading {
       text-align: center;
-      padding: 80px 20px;
-      display: none;
+      padding: 100px 20px;
     }
     .spinner {
       width: 60px; height: 60px;
@@ -172,19 +148,21 @@
       <p>กรุณากรอกข้อมูลให้ครบถ้วน</p>
     </div>
 
-    <div id="loading" class="loading" style="display:block;">
+    <div id="loading" class="loading">
       <div class="spinner"></div>
       <p style="font-size:18px;color:#333;">กำลังเชื่อมต่อกับ LINE...</p>
     </div>
 
-    <div id="main-content" class="content" style="display:none;">
+    <div id="main-content" style="display:none;" class="content">
+
       <div class="profile-box">
-        <img id="profile-preview" class="profile-preview" src="" alt="รูปโปรไฟล์">
+        <img id="profile-preview" class="profile-preview" src="" alt="โปรไฟล์">
         <div class="profile-name" id="display-name">กำลังโหลด...</div>
         <div style="color:#27ae60;font-weight:500;">บัญชี LINE ของคุณ</div>
       </div>
 
       <form id="construction-form">
+
         <div class="form-group">
           <label>รหัสโครงการก่อสร้าง *</label>
           <select id="project-code" required></select>
@@ -202,13 +180,13 @@
 
         <div class="form-group">
           <label>รายละเอียดงาน</label>
-          <textarea id="details" placeholder="เช่น งานเทพื้นชั้น 2, งานทาสีภายนอก ฯลฯ"></textarea>
+          <textarea id="details" placeholder="เช่น เทพื้นชั้น 2, ทาสีภายนอก, ติดตั้งประตู ฯลฯ"></textarea>
         </div>
 
         <div class="form-group">
           <label>รูปภาพก่อนดำเนินการ</label>
           <div class="image-upload" onclick="document.getElementById('img-before-input').click()">
-            <p>คลิกเพื่ออัปโหลดรูปก่อนทำ</p>
+            <p>คลิกเพื่อเลือกภาพก่อนทำ</p>
             <img id="img-before-preview" class="image-preview">
           </div>
           <input type="file" id="img-before-input" accept="image/*" style="display:none;">
@@ -217,7 +195,7 @@
         <div class="form-group">
           <label>รูปภาพหลังดำเนินการ</label>
           <div class="image-upload" onclick="document.getElementById('img-after-input').click()">
-            <p>คลิกเพื่ออัปโหลดรูปหลังทำ</p>
+            <p>คลิกเพื่อเลือกภาพหลังทำ</p>
             <img id="img-after-preview" class="image-preview">
           </div>
           <input type="file" id="img-after-input" accept="image/*" style="display:none;">
@@ -231,89 +209,124 @@
         <button type="submit" id="submit-btn">ส่งข้อมูลบันทึกงาน</button>
       </form>
     </div>
-
-    <div id="error" class="error"></div>
   </div>
 
-  <!-- LINE LIFF + Select2 + jQuery -->
+  <!-- Scripts -->
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
   <script>
-    // เปลี่ยนแค่ 2 ค่านี้
+    // เปลี่ยนแค่ 2 ค่านี้เท่านั้น!
     const LIFF_ID = "2008591672-z8X5p3qv"; // เปลี่ยนเป็น LIFF ID ของคุณ
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyUue4vUCRVykuLTl-D3VUv98OANpP7K_ReNdgLxgKlG1Li76sSMktrM-kXgOSNeHSB/exec"; // Web App URL
-
-    const DRIVE_FOLDER_ID = "1SsdxPtl4a19kkMfi7ZPvQkIyFIvTI5a3"; // Folder เก็บรูป
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyUue4vUCRVykuLTl-D3VUv98OANpP7K_ReNdgLxgKlG1Li76sSMktrM-kXgOSNeHSB/exec"; // Web App URL ของคุณ
 
     let lineProfile = null;
-
-    // อัปโหลดรูป → Base64
-    function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = error => reject(error);
-      });
-    }
+    let projectsMap = {}; // code → name
 
     // Preview รูป
-    function previewImage(inputId, previewId) {
+    function setupPreview(inputId, previewId) {
       const input = document.getElementById(inputId);
       const preview = document.getElementById(previewId);
-      input.onchange = async () => {
-        const file = input.files[0];
-        if (file) {
-          preview.src = URL.createObjectURL(file);
+      input.onchange = () => {
+        if (input.files[0]) {
+          preview.src = URL.createObjectURL(input.files[0]);
           preview.style.display = 'block';
         }
       };
     }
-    previewImage('img-before-input', 'img-before-preview');
-    previewImage('img-after-input', 'img-after-preview');
+    setupPreview('img-before-input', 'img-before-preview');
+    setupPreview('img-after-input', 'img-after-preview');
 
-    // ดึงข้อมูล dropdown จาก Google Sheet ผ่าน Web App
-    async function loadDropdownData() {
+    // ลดขนาดรูปก่อนส่ง (สำคัญมาก)
+    async function compressImage(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 1200;
+            let { width, height } = img;
+
+            if (width > MAX_WIDTH) {
+              height = (MAX_WIDTH / width) * height;
+              width = MAX_WIDTH;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob((blob) => {
+              const reader2 = new FileReader();
+              reader2.onloadend = () => resolve(reader2.result.split(',')[1]);
+              reader2.readAsDataURL(blob);
+            }, 'image/jpeg', 0.85);
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // โหลด dropdown + Auto fill
+    async function loadDropdowns() {
       try {
         const res = await fetch(WEB_APP_URL + '?action=getDropdown');
         const json = await res.json();
-        if (json.status !== 'success') throw new Error(json.message);
+        if (json.status !== 'success') throw new Error(json.message || 'โหลดข้อมูลไม่สำเร็จ');
 
         const { projects, supervisors } = json.data;
 
-        // รหัสโครงการ
-        const codeSelect = $('#project-code');
-        const nameSelect = $('#project-name');
-        codeSelect.empty().append('<option value="">เลือก...</option>');
-        nameSelect.empty().append('<option value="">เลือก...</option>');
-
+        projectsMap = {};
         projects.forEach(p => {
-          codeSelect.append(`<option value="${p.code}">${p.code}</option>`);
-          nameSelect.append(`<option value="${p.name}">${p.name}</option>`);
+          projectsMap[p.code] = p.name;
         });
 
-        // ชื่อผู้คุมงาน
-        const supSelect = $('#supervisor');
-        supSelect.empty().append('<option value="">เลือก...</option>');
-        supervisors.forEach(s => {
-          supSelect.append(`<option value="${s}">${s}</option>`);
+        // รหัสโครงการ
+        const codeSel = $('#project-code');
+        codeSel.empty().append('<option value="">เลือกรหัสโครงการ...</option>');
+        projects.forEach(p => codeSel.append(`<option value="${p.code}">${p.code}</option>`));
+
+        // ชื่อโครงการ
+        const nameSel = $('#project-name');
+        nameSel.empty().append('<option value="">เลือกชื่อโครงการ...</option>');
+        projects.forEach(p => nameSel.append(`<option value="${p.name}">${p.name}</option>`));
+
+        // ผู้คุมงาน
+        const supSel = $('#supervisor');
+        supSel.empty().append('<option value="">เลือกผู้คุมงาน...</option>');
+        supervisors.forEach(s => supSel.append(`<option value="${s}">${s}</option>`));
+
+        // Auto fill ทั้งสองทาง
+        codeSel.on('change', function() {
+          const code = this.value;
+          if (code && projectsMap[code]) {
+            nameSel.val(projectsMap[code]).trigger('change');
+          }
+        });
+        nameSel.on('change', function() {
+          const name = this.value;
+          if (name) {
+            const found = projects.find(p => p.name === name);
+            if (found) codeSel.val(found.code).trigger('change');
+          }
         });
 
         // เปิด Select2
         $('#project-code, #project-name, #supervisor').select2({
-          placeholder: "เลือก...",
+          placeholder: "กรุณาเลือก...",
           allowClear: true,
           width: '100%'
         });
 
       } catch (err) {
-        document.getElementById('error').innerHTML = `<p style="color:#e74c3c;">โหลดข้อมูล dropdown ไม่สำเร็จ: ${err.message}</p>`;
-        document.getElementById('error').style.display = 'block';
+        alert('โหลดข้อมูลโครงการล้มเหลว: ' + err.message);
       }
     }
 
+    // เริ่มต้น LIFF
     document.addEventListener('DOMContentLoaded', async () => {
       try {
         await liff.init({ liffId: LIFF_ID });
@@ -330,22 +343,23 @@
         document.getElementById('display-name').textContent = lineProfile.displayName;
         document.getElementById('profile-preview').src = lineProfile.pictureUrl || 'https://via.placeholder.com/100/06C755/white?text=LINE';
 
-        // โหลด dropdown
-        await loadDropdownData();
+        await loadDropdowns();
 
-        // Submit
+        // ส่งข้อมูล
         document.getElementById('construction-form').onsubmit = async (e) => {
           e.preventDefault();
-
           const btn = document.getElementById('submit-btn');
           btn.disabled = true;
-          btn.textContent = 'กำลังส่งข้อมูล...';
+          btn.textContent = 'กำลังบีบอัดและส่งข้อมูล...';
 
           try {
             const beforeFile = document.getElementById('img-before-input').files[0];
             const afterFile = document.getElementById('img-after-input').files[0];
 
-            const data = {
+            const beforeB64 = beforeFile ? await compressImage(beforeFile) : '';
+            const afterB64 = afterFile ? await compressImage(afterFile) : '';
+
+            const payload = {
               action: 'submitConstruction',
               timestamp: new Date().toISOString(),
               lineUserId: lineProfile.userId,
@@ -357,46 +371,43 @@
               supervisor: document.getElementById('supervisor').value,
               details: document.getElementById('details').value.trim(),
               comments: document.getElementById('comments').value.trim(),
-              imageBeforeBase64: beforeFile ? await fileToBase64(beforeFile) : '',
+              imageBeforeBase64: beforeB64,
               imageBeforeName: beforeFile ? beforeFile.name : '',
-              imageAfterBase64: afterFile ? await fileToBase64(afterFile) : '',
-              imageAfterName: afterFile ? afterFile.name : '',
-              driveFolderId: DRIVE_FOLDER_ID
+              imageAfterBase64: afterB64,
+              imageAfterName: afterFile ? afterFile.name : ''
             };
 
             const res = await fetch(WEB_APP_URL, {
               method: 'POST',
-              body: JSON.stringify(data)
+              body: JSON.stringify(payload)
             });
 
             const result = await res.json();
 
             if (result.status === 'success') {
-              btn.textContent = 'ส่งสำเร็จ!';
-              btn.style.background = 'linear-gradient(to right, #27ae60, #2ecc71)';
-              setTimeout(() => liff.closeWindow(), 2000);
+              btn.textContent = 'ส่งข้อมูลสำเร็จ!';
+              btn.style.background = '#27ae60';
+              setTimeout(() => liff.closeWindow(), 1800);
             } else {
               throw new Error(result.message || 'เกิดข้อผิดพลาด');
             }
           } catch (err) {
-            btn.textContent = 'ส่งไม่สำเร็จ';
+            console.error(err);
+            btn.textContent = 'ส่งไม่สำเร็จ: ' + err.message;
             btn.style.background = '#e74c3c';
             setTimeout(() => {
+              btn.disabled = false;
               btn.textContent = 'ส่งข้อมูลบันทึกงาน';
               btn.style.background = 'linear-gradient(to right, var(--primary), var(--primary-dark))';
-              btn.disabled = false;
-            }, 3000);
-            console.error(err);
+            }, 4000);
           }
         };
 
       } catch (err) {
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('error').innerHTML = `
-          <p style="color:#e74c3c;font-size:18px;">ไม่สามารถเชื่อมต่อ LINE ได้</p>
+        document.getElementById('loading').innerHTML = `
+          <p style="color:#e74c3c;font-size:18px;">เชื่อมต่อ LINE ไม่สำเร็จ</p>
           <button onclick="location.reload()" style="background:var(--primary);color:white;padding:14px 30px;border:none;border-radius:12px;margin-top:20px;">ลองใหม่</button>
         `;
-        document.getElementById('error').style.display = 'block';
       }
     });
   </script>
