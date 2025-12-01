@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ลงทะเบียนผู้ปกครอง - นักเรียน</title>
+  <title>บันทึกข้อมูลโครงการก่อสร้าง</title>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <style>
     :root {
       --primary: #06C755;
@@ -23,7 +24,7 @@
       padding: 10px;
     }
     .container {
-      max-width: 700px;
+      max-width: 750px;
       margin: 20px auto;
       background: white;
       border-radius: 20px;
@@ -50,19 +51,13 @@
       margin-bottom: 30px;
     }
     .profile-preview {
-      width: 100px;
-      height: 100px;
+      width: 100px; height: 100px;
       border-radius: 50%;
       border: 5px solid white;
       box-shadow: 0 6px 20px rgba(6,199,85,0.3);
       object-fit: cover;
     }
-    .profile-name {
-      margin: 15px 0 5px;
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--primary);
-    }
+    .profile-name { margin: 15px 0 5px; font-size: 20px; font-weight: 600; color: var(--primary); }
 
     h2 {
       text-align: center;
@@ -73,58 +68,56 @@
     }
     h2::after {
       content: '';
-      width: 80px;
-      height: 4px;
+      width: 80px; height: 4px;
       background: var(--primary);
       display: block;
       margin: 12px auto 0;
       border-radius: 2px;
     }
 
-    /* ทำให้ชื่อและช่องกรอกอยู่ในแนวเดียวกันสวยงาม */
     .form-group {
-      display: flex;
-      align-items: center;
-      margin-bottom: 22px;
-      flex-wrap: wrap;
-      gap: 15px;
+      margin-bottom: 24px;
     }
-    .form-label {
+    label {
+      display: block;
       font-weight: 600;
       color: var(--primary);
-      width: 170px;
+      margin-bottom: 8px;
       font-size: 16px;
-      flex-shrink: 0;
     }
-    .form-input {
-      flex: 1;
-      min-width: 280px;
-    }
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 14px 16px;
       border: 2px solid #cce7d6;
       border-radius: 12px;
       font-family: 'Prompt', sans-serif;
       font-size: 16px;
-      transition: all 0.3s;
       background: #f8fffb;
     }
-    input:focus, textarea:focus {
+    input:focus, textarea:focus, select:focus {
       outline: none;
       border-color: var(--primary);
       background: white;
-      box-shadow: 0 0 0 4px rgba(6, 199, 85, 0.15);
+      box-shadow: 0 0 0 4px rgba(6,199,85,0.15);
     }
-    textarea {
-      min-height: 100px;
-      resize: vertical;
+    textarea { min-height: 100px; resize: vertical; }
+
+    .image-upload {
+      border: 2px dashed #86efac;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      background: #f0fdf4;
+      cursor: pointer;
+      transition: all 0.3s;
     }
-    small {
-      color: #e74c3c;
-      font-size: 13.5px;
-      margin-top: 6px;
-      display: block;
+    .image-upload:hover { background: #e6f7ee; }
+    .image-preview {
+      max-width: 100%;
+      max-height: 200px;
+      margin-top: 10px;
+      border-radius: 8px;
+      display: none;
     }
 
     button {
@@ -143,19 +136,17 @@
       box-shadow: 0 6px 20px rgba(6,199,85,0.3);
       transition: all 0.3s;
     }
-    button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(6,199,85,0.4);
-    }
+    button:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(6,199,85,0.4); }
     button:disabled {
       background: #95a5a6;
       transform: none;
       cursor: not-allowed;
     }
 
-    .loading {
+    .loading, .error {
       text-align: center;
-      padding: 100px 20px;
+      padding: 80px 20px;
+      display: none;
     }
     .spinner {
       width: 60px; height: 60px;
@@ -167,18 +158,7 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .footer {
-      text-align: center;
-      padding: 25px;
-      background: #f0fdf4;
-      color: #2c8a4e;
-      font-size: 14.5px;
-      border-top: 1px solid #d0e8d8;
-    }
-
     @media (max-width: 600px) {
-      .form-group { flex-direction: column; align-items: stretch; gap: 8px; }
-      .form-label { width: 100%; font-size: 15.5px; }
       .content { padding: 25px 20px; }
       .profile-preview { width: 80px; height: 80px; }
     }
@@ -188,172 +168,237 @@
 
   <div class="container">
     <div class="header">
-      <h1>ลงทะเบียนผู้ปกครอง</h1>
-      <p>กรอกข้อมูลนักเรียนและผู้ปกครองให้ครบถ้วน</p>
+      <h1>บันทึกข้อมูลโครงการก่อสร้าง</h1>
+      <p>กรุณากรอกข้อมูลให้ครบถ้วน</p>
     </div>
 
-    <div id="loading" class="loading">
+    <div id="loading" class="loading" style="display:block;">
       <div class="spinner"></div>
-      <p style="font-size:18px; color:#333;">กำลังเชื่อมต่อกับ LINE...</p>
+      <p style="font-size:18px;color:#333;">กำลังเชื่อมต่อกับ LINE...</p>
     </div>
 
-    <div id="profile" class="content" style="display:none;">
+    <div id="main-content" class="content" style="display:none;">
       <div class="profile-box">
         <img id="profile-preview" class="profile-preview" src="" alt="รูปโปรไฟล์">
         <div class="profile-name" id="display-name">กำลังโหลด...</div>
-        <div style="color:#27ae60; font-weight:500;">บัญชี LINE ของคุณ</div>
+        <div style="color:#27ae60;font-weight:500;">บัญชี LINE ของคุณ</div>
       </div>
 
-      <h2>ข้อมูลผู้ปกครองและนักเรียน</h2>
-
-      <form id="reg-form">
-
+      <form id="construction-form">
         <div class="form-group">
-          <div class="form-label">ชื่อผู้ปกครอง</div>
-          <div class="form-input">
-            <input type="text" id="parent-firstname" placeholder="เช่น สมชาย" required>
-          </div>
+          <label>รหัสโครงการก่อสร้าง *</label>
+          <select id="project-code" required></select>
         </div>
 
         <div class="form-group">
-          <div class="form-label">นามสกุลผู้ปกครอง</div>
-          <div class="form-input">
-            <input type="text" id="parent-lastname" placeholder="เช่น ใจดี" required>
-          </div>
+          <label>ชื่อโครงการก่อสร้าง *</label>
+          <select id="project-name" required></select>
         </div>
 
         <div class="form-group">
-          <div class="form-label">เบอร์โทรผู้ปกครอง</div>
-          <div class="form-input">
-            <input
-              type="tel"
-              id="parent-phone"
-              placeholder="0901234567"
-              maxlength="10"
-              inputmode="numeric"
-              oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,10)"
-              required>
-            <small>กรอกเฉพาะตัวเลข 10 หลัก เช่น 0901234567</small>
-          </div>
+          <label>ชื่อผู้คุมงาน *</label>
+          <select id="supervisor" required></select>
         </div>
 
         <div class="form-group">
-          <div class="form-label">รหัสนักเรียน</div>
-          <div class="form-input">
-            <input type="text" id="student-id" placeholder="เช่น 650001" required>
-          </div>
+          <label>รายละเอียดงาน</label>
+          <textarea id="details" placeholder="เช่น งานเทพื้นชั้น 2, งานทาสีภายนอก ฯลฯ"></textarea>
         </div>
 
         <div class="form-group">
-          <div class="form-label">ชื่อนักเรียน</div>
-          <div class="form-input">
-            <input type="text" id="student-firstname" placeholder="ชื่อจริงของนักเรียน" required>
+          <label>รูปภาพก่อนดำเนินการ</label>
+          <div class="image-upload" onclick="document.getElementById('img-before-input').click()">
+            <p>คลิกเพื่ออัปโหลดรูปก่อนทำ</p>
+            <img id="img-before-preview" class="image-preview">
           </div>
+          <input type="file" id="img-before-input" accept="image/*" style="display:none;">
         </div>
 
         <div class="form-group">
-          <div class="form-label">นามสกุลนักเรียน</div>
-          <div class="form-input">
-            <input type="text" id="student-lastname" placeholder="นามสกุลนักเรียน" required>
+          <label>รูปภาพหลังดำเนินการ</label>
+          <div class="image-upload" onclick="document.getElementById('img-after-input').click()">
+            <p>คลิกเพื่ออัปโหลดรูปหลังทำ</p>
+            <img id="img-after-preview" class="image-preview">
           </div>
+          <input type="file" id="img-after-input" accept="image/*" style="display:none;">
         </div>
 
         <div class="form-group">
-          <div class="form-label">หมายเหตุ</div>
-          <div class="form-input">
-            <textarea id="comments" rows="3" placeholder="เช่น แพ้อาหารทะเล, รับยาตอนเช้า, ขออนุญาตกลับบ้านเอง ฯลฯ"></textarea>
-          </div>
+          <label>หมายเหตุ</label>
+          <textarea id="comments" placeholder="หมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>
         </div>
 
-        <button type="submit" id="submit-btn">ส่งข้อมูลลงทะเบียน</button>
+        <button type="submit" id="submit-btn">ส่งข้อมูลบันทึกงาน</button>
       </form>
-
-      <div class="footer">
-        ระบบลงทะเบียนผ่าน LINE LIFF • ข้อมูลถูกบันทึกอย่างปลอดภัยใน Google Sheets
-      </div>
     </div>
+
+    <div id="error" class="error"></div>
   </div>
 
+  <!-- LINE LIFF + Select2 + jQuery -->
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
   <script>
-    // เปลี่ยนแค่ 2 บรรทัดนี้เท่านั้น!
-    const LIFF_ID = "2008591672-z8X5p3qv";     // เปลี่ยนเป็น LIFF ID ของคุณ
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyUue4vUCRVykuLTl-D3VUv98OANpP7K_ReNdgLxgKlG1Li76sSMktrM-kXgOSNeHSB/exec"; // เปลี่ยนเป็น Web App URL ของคุณ
+    // เปลี่ยนแค่ 2 ค่านี้
+    const LIFF_ID = "2008591672-z8X5p3qv"; // เปลี่ยนเป็น LIFF ID ของคุณ
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyUue4vUCRVykuLTl-D3VUv98OANpP7K_ReNdgLxgKlG1Li76sSMktrM-kXgOSNeHSB/exec"; // Web App URL
 
-    document.addEventListener('DOMContentLoaded', () => {
-      liff.init({ liffId: LIFF_ID })
-        .then(() => {
-          if (!liff.isLoggedIn()) {
-            liff.login({ redirectUri: window.location.href });
-          } else {
-            return liff.getProfile();
-          }
-        })
-        .then(profile => {
-          document.getElementById('loading').style.display = 'none';
-          document.getElementById('profile').style.display = 'block';
+    const DRIVE_FOLDER_ID = "1SsdxPtl4a19kkMfi7ZPvQkIyFIvTI5a3"; // Folder เก็บรูป
 
-          document.getElementById('display-name').textContent = profile.displayName;
-          const pic = profile.pictureUrl || 'https://via.placeholder.com/100/06C755/white?text=LINE';
-          document.getElementById('profile-preview').src = pic;
+    let lineProfile = null;
 
-          document.getElementById('reg-form').onsubmit = function(e) {
-            e.preventDefault();
+    // อัปโหลดรูป → Base64
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = error => reject(error);
+      });
+    }
 
-            const phone = document.getElementById('parent-phone').value;
-            if (phone.length !== 10) {
-              alert('กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก');
-              return;
-            }
+    // Preview รูป
+    function previewImage(inputId, previewId) {
+      const input = document.getElementById(inputId);
+      const preview = document.getElementById(previewId);
+      input.onchange = async () => {
+        const file = input.files[0];
+        if (file) {
+          preview.src = URL.createObjectURL(file);
+          preview.style.display = 'block';
+        }
+      };
+    }
+    previewImage('img-before-input', 'img-before-preview');
+    previewImage('img-after-input', 'img-after-preview');
 
-            const btn = document.getElementById('submit-btn');
-            btn.disabled = true;
-            btn.textContent = 'กำลังส่งข้อมูล...';
+    // ดึงข้อมูล dropdown จาก Google Sheet ผ่าน Web App
+    async function loadDropdownData() {
+      try {
+        const res = await fetch(WEB_APP_URL + '?action=getDropdown');
+        const json = await res.json();
+        if (json.status !== 'success') throw new Error(json.message);
+
+        const { projects, supervisors } = json.data;
+
+        // รหัสโครงการ
+        const codeSelect = $('#project-code');
+        const nameSelect = $('#project-name');
+        codeSelect.empty().append('<option value="">เลือก...</option>');
+        nameSelect.empty().append('<option value="">เลือก...</option>');
+
+        projects.forEach(p => {
+          codeSelect.append(`<option value="${p.code}">${p.code}</option>`);
+          nameSelect.append(`<option value="${p.name}">${p.name}</option>`);
+        });
+
+        // ชื่อผู้คุมงาน
+        const supSelect = $('#supervisor');
+        supSelect.empty().append('<option value="">เลือก...</option>');
+        supervisors.forEach(s => {
+          supSelect.append(`<option value="${s}">${s}</option>`);
+        });
+
+        // เปิด Select2
+        $('#project-code, #project-name, #supervisor').select2({
+          placeholder: "เลือก...",
+          allowClear: true,
+          width: '100%'
+        });
+
+      } catch (err) {
+        document.getElementById('error').innerHTML = `<p style="color:#e74c3c;">โหลดข้อมูล dropdown ไม่สำเร็จ: ${err.message}</p>`;
+        document.getElementById('error').style.display = 'block';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        await liff.init({ liffId: LIFF_ID });
+        if (!liff.isLoggedIn()) {
+          liff.login({ redirectUri: window.location.href });
+          return;
+        }
+
+        lineProfile = await liff.getProfile();
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+
+        document.getElementById('display-name').textContent = lineProfile.displayName;
+        document.getElementById('profile-preview').src = lineProfile.pictureUrl || 'https://via.placeholder.com/100/06C755/white?text=LINE';
+
+        // โหลด dropdown
+        await loadDropdownData();
+
+        // Submit
+        document.getElementById('construction-form').onsubmit = async (e) => {
+          e.preventDefault();
+
+          const btn = document.getElementById('submit-btn');
+          btn.disabled = true;
+          btn.textContent = 'กำลังส่งข้อมูล...';
+
+          try {
+            const beforeFile = document.getElementById('img-before-input').files[0];
+            const afterFile = document.getElementById('img-after-input').files[0];
 
             const data = {
+              action: 'submitConstruction',
               timestamp: new Date().toISOString(),
-              lineUserId: profile.userId,
-              displayName: profile.displayName,
-              pictureUrl: profile.pictureUrl || '',
-              statusMessage: profile.statusMessage || '',
-              parentFirstName: document.getElementById('parent-firstname').value.trim(),
-              parentLastName: document.getElementById('parent-lastname').value.trim(),
-              parentPhone: phone,
-              studentId: document.getElementById('student-id').value.trim(),
-              studentFirstName: document.getElementById('student-firstname').value.trim(),
-              studentLastName: document.getElementById('student-lastname').value.trim(),
-              comments: document.getElementById('comments').value.trim()
+              lineUserId: lineProfile.userId,
+              displayName: lineProfile.displayName,
+              pictureUrl: lineProfile.pictureUrl || '',
+              statusMessage: lineProfile.statusMessage || '',
+              projectCode: document.getElementById('project-code').value,
+              projectName: document.getElementById('project-name').value,
+              supervisor: document.getElementById('supervisor').value,
+              details: document.getElementById('details').value.trim(),
+              comments: document.getElementById('comments').value.trim(),
+              imageBeforeBase64: beforeFile ? await fileToBase64(beforeFile) : '',
+              imageBeforeName: beforeFile ? beforeFile.name : '',
+              imageAfterBase64: afterFile ? await fileToBase64(afterFile) : '',
+              imageAfterName: afterFile ? afterFile.name : '',
+              driveFolderId: DRIVE_FOLDER_ID
             };
 
-            fetch(WEB_APP_URL, {
+            const res = await fetch(WEB_APP_URL, {
               method: 'POST',
-              mode: 'no-cors',
               body: JSON.stringify(data)
-            })
-            .then(() => {
+            });
+
+            const result = await res.json();
+
+            if (result.status === 'success') {
               btn.textContent = 'ส่งสำเร็จ!';
               btn.style.background = 'linear-gradient(to right, #27ae60, #2ecc71)';
-              setTimeout(() => liff.closeWindow(), 1800);
-            })
-            .catch(() => {
-              btn.textContent = 'ส่งไม่สำเร็จ ลองใหม่';
-              btn.style.background = '#e74c3c';
-              setTimeout(() => {
-                btn.textContent = 'ส่งข้อมูลลงทะเบียน';
-                btn.style.background = 'linear-gradient(to right, var(--primary), var(--primary-dark))';
-                btn.disabled = false;
-              }, 3000);
-            });
-          };
-        })
-        .catch(err => {
-          document.getElementById('loading').innerHTML = `
-            <p style="color:#e74c3c; font-size:18px;">ไม่สามารถเชื่อมต่อ LINE ได้</p>
-            <button onclick="location.reload()" style="background:var(--primary);color:white;padding:14px 30px;border:none;border-radius:12px;margin-top:20px;">ลองใหม่</button>
-          `;
-        });
+              setTimeout(() => liff.closeWindow(), 2000);
+            } else {
+              throw new Error(result.message || 'เกิดข้อผิดพลาด');
+            }
+          } catch (err) {
+            btn.textContent = 'ส่งไม่สำเร็จ';
+            btn.style.background = '#e74c3c';
+            setTimeout(() => {
+              btn.textContent = 'ส่งข้อมูลบันทึกงาน';
+              btn.style.background = 'linear-gradient(to right, var(--primary), var(--primary-dark))';
+              btn.disabled = false;
+            }, 3000);
+            console.error(err);
+          }
+        };
+
+      } catch (err) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').innerHTML = `
+          <p style="color:#e74c3c;font-size:18px;">ไม่สามารถเชื่อมต่อ LINE ได้</p>
+          <button onclick="location.reload()" style="background:var(--primary);color:white;padding:14px 30px;border:none;border-radius:12px;margin-top:20px;">ลองใหม่</button>
+        `;
+        document.getElementById('error').style.display = 'block';
+      }
     });
   </script>
 </body>
 </html>
-
